@@ -1,5 +1,5 @@
 import openai
-OPENAI_API_KEY = 'org-JLjgUhy3RyCA5dBc4PJub7Ba'
+OPENAI_API_KEY = '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'
 openai.api_key = OPENAI_API_KEY
 import json
 messages = [
