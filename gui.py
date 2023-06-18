@@ -12,11 +12,11 @@ class App(Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.input_label = Label(self, text="Enter a string:")
+        self.input_label = Label(self, text="Provide comma-separated list of keywords:")
         self.input_label.pack()
         self.input_entry = Entry(self)
         self.input_entry.pack()
-        self.submit_button = Button(self, text="Generate Sequence List", command=self.generate_sequence_list)
+        self.submit_button = Button(self, text="Generate Functional Fusion Protein", command=self.generate_sequence_list)
         self.submit_button.pack()
         self.output_label = Label(self, text="Output:")
         self.output_label.pack()
