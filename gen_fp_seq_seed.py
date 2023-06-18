@@ -46,8 +46,8 @@ def generate_fp_sequence(prompt:str):
     
     #protein_sequences1 = []
     #protein_sequences2 = []
-    protein_sequences1 = seq_seed_gen(pfam_values=pfam_values)
-    protein_sequences2 = seq_logo_gen(pfam_values=pfam_values)
+    protein_sequences_str = seq_seed_gen(pfam_values=pfam_values)
+    #protein_sequences2 = seq_logo_gen(pfam_values=pfam_values)
     
     #print()
 
@@ -55,29 +55,23 @@ def generate_fp_sequence(prompt:str):
     #protein_sequences = protein_sequences1
     protein_sequences = []
     
-    for i in range(len(protein_sequences1)):
-        protein_sequences1[i] = list(str(protein_sequences1[i]))
-        protein_sequences2[i] = list(str(protein_sequences2[i]))
+    for i in range(len(protein_sequences_str)):
+        protein_sequences_str[i] = list(str(protein_sequences_str[i]))
+        #protein_sequences2[i] = list(str(protein_sequences2[i]))
 
         #protein_sequences1_tmp = protein_sequences1
-        for j in range(len(protein_sequences1[i])):
-            for element in protein_sequences1[i]:
+        for j in range(len(protein_sequences_str[i])):
+            for element in protein_sequences_str[i]:
                 if element == "-" or element == ".":
-                    protein_sequences1[i].remove(element)
+                    protein_sequences_str[i].remove(element)
 
         #protein_sequences1 = protein
-        if len(protein_sequences1[i]) != len(protein_sequences2[i]):
-            print('Warning: sequence logo and seed length do not match')
-            protein_sequences.append(Seq("".join(protein_sequences1[i])))
-            continue
+        #if len(protein_sequences1[i]) != len(protein_sequences2[i]):
+        #    print('Warning: sequence logo and seed length do not match')
+        #    protein_sequences.append(Seq("".join(protein_sequences1[i])))
+        #    continue
 
-        for j in range(len(protein_sequences1[i])):
-            if protein_sequences1[i][j] == ".":
-                protein_sequences1[i][j] = protein_sequences2[i][j]
-            if protein_sequences1[i][j] == "-":
-                protein_sequences1[i][j] = protein_sequences2[i][j]
-
-        protein_sequences.append(Seq("".join(protein_sequences1[i])))
+        protein_sequences.append(Seq("".join(protein_sequences_str[i])))
 
     #protein_sequences = 
 
@@ -110,7 +104,7 @@ def seq_seed_gen(pfam_values: list):
             #print(align)
             
             
-            protein_sequence = create_sequence_based_on_common(protein_seed_sequences)
+            protein_sequence = rank_sequences_based_on_common(protein_seed_sequences)[0][1]
             protein_sequences.append(protein_sequence)
             protein_seed_sequences = []
         else:
