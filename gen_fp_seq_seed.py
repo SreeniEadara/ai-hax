@@ -4,9 +4,11 @@ import os
 from Bio.Seq import Seq
 from Bio import AlignIO
 
-def generate_fp_sequence(prompt:str):
+def ai_generate_sequence_list(prompt:str):
 
-    OPENAI_API_KEY = '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'  # Replace with your OpenAI key
+    with open("openai-key.txt", 'r') as file:
+        OPENAI_API_KEY = file.read().replace("\n", '')
+        
     openai.api_key = OPENAI_API_KEY
 
     messages = [
@@ -38,22 +40,24 @@ def generate_fp_sequence(prompt:str):
     # Create a set of unique pfam_values to prevent duplicate requests
     pfam_values = list(set(pfam_values))
 
-    protein_sequences_str = seq_seed_gen(pfam_values=pfam_values)
-    
+    protein_sequences_seq = seq_seed_gen(pfam_values=pfam_values)
 
+    return protein_sequences_seq
+    
+def fp_generate(protein_sequences_seq: list):
     fusion_prot = ""
     protein_sequences = []
     
-    for i in range(len(protein_sequences_str)):
-        protein_sequences_str[i] = list(str(protein_sequences_str[i]))
+    for i in range(len(protein_sequences_seq)):
+        protein_sequences_seq[i] = list(str(protein_sequences_seq[i]))
 
-        for j in range(len(protein_sequences_str[i])):
-            for element in protein_sequences_str[i]:
+        for j in range(len(protein_sequences_seq[i])):
+            for element in protein_sequences_seq[i]:
                 if element == "-" or element == ".":
-                    protein_sequences_str[i].remove(element)
+                    protein_sequences_seq[i].remove(element)
 
 
-        protein_sequences.append(Seq("".join(protein_sequences_str[i])))
+        protein_sequences.append(Seq("".join(protein_sequences_seq[i])))
 
     for protein_sequence in protein_sequences:
         fusion_prot+=protein_sequence + "GSGSGS"
@@ -80,7 +84,7 @@ def seq_seed_gen(pfam_values: list):
             for record in align:
                 protein_seed_sequences.append(record.seq)
             
-            protein_sequence = rank_sequences_based_on_common(protein_seed_sequences)[0][1]
+            protein_sequence = create_sequence_based_on_common(protein_seed_sequences)
             protein_sequences.append(protein_sequence)
             protein_seed_sequences = []
         else:
@@ -154,11 +158,3 @@ def rank_sequences_based_on_common(sequences):
     ranked_sequences.sort(reverse=True)
 
     return ranked_sequences
-
-
-def run():
-    prompt = input('Provide comma-seprated list of keywords\n')
-    result = generate_fp_sequence(prompt)
-    print(result)
-
-run()
