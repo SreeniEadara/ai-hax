@@ -46,6 +46,10 @@ def ai_generate_sequence_list(prompt:str):
     return protein_sequences_seq
     
 def fp_generate(protein_sequences_seq: list):
+    if len(protein_sequences_seq) == 0:
+        print("No protein sequences!")
+        return Seq("")
+
     fusion_prot = ""
     protein_sequences = []
     
@@ -80,7 +84,7 @@ def seq_seed_gen(pfam_values: list):
         if response.status_code == 200:
             align = AlignIO.read(StringIO(response.text), "stockholm")
             protein_seed_sequences = [record.seq for record in align]
-            
+
             protein_sequence = create_sequence_based_on_common(protein_seed_sequences)
             protein_sequences.append(protein_sequence)
             #protein_seed_sequences = []
