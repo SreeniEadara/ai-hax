@@ -50,11 +50,13 @@ class App(Frame):
             f.write(self.output_text.get("1.0", END))
 
     def open_fold(self):
+        #Note: for sequences above a certain length, ESM2 web struggles and produces an error
         response = send_request_0(str(self.result_record.seq))
-        #print(response_0.text)
+        
         response = send_request_0(str(self.result_record.seq))
-        #print(response_1.text)
+        
         response = send_request_1(str(self.result_record.seq))
+        del response
         webbrowser.open("https://esmatlas.com/resources/fold/result?fasta_header=>" + self.result_record.id + "&sequence=" + self.result_record.seq)
 
 
