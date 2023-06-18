@@ -1,5 +1,6 @@
 import openai
 import requests
+from Bio.Seq import Seq
 
 def generate_fp_sequence(prompt:str):
 
@@ -68,7 +69,8 @@ def generate_fp_sequence(prompt:str):
     if fusion_prot[0] != "M":
         fusion_prot = "M" + fusion_prot
     
-    return(fusion_prot)
+    fusion_prot_seq = Seq(fusion_prot)
+    return(fusion_prot_seq)
 
 def run():
     prompt = input('Provide comma-seprated list of keywords\n')
