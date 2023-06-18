@@ -3,6 +3,7 @@ import requests
 import os
 from Bio.Seq import Seq
 from Bio import AlignIO
+from io import StringIO
 
 def ai_generate_sequence_list(prompt:str):
 
@@ -72,21 +73,17 @@ def fp_generate(protein_sequences_seq: list):
 
 def seq_seed_gen(pfam_values: list):
     protein_sequences = []
-    protein_seed_sequences = []
+    #protein_seed_sequences = []
     url = "https://www.ebi.ac.uk/interpro/api/entry/pfam/"
     for pfam_value in pfam_values:
         response = requests.get(url + pfam_value + "?annotation=alignment:seed")
         if response.status_code == 200:
-            with open('tmp.txt', 'w') as f:
-                f.write(response.text)
-            align = AlignIO.read('tmp.txt', "stockholm")
-            os.remove('tmp.txt')
-            for record in align:
-                protein_seed_sequences.append(record.seq)
+            align = AlignIO.read(StringIO(response.text), "stockholm")
+            protein_seed_sequences = [record.seq for record in align]
             
             protein_sequence = create_sequence_based_on_common(protein_seed_sequences)
             protein_sequences.append(protein_sequence)
-            protein_seed_sequences = []
+            #protein_seed_sequences = []
         else:
             print(f"Warning: Failed to retrieve data for pfam_value {pfam_value}.")
     
