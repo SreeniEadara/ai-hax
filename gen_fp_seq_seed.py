@@ -1,8 +1,8 @@
 import openai
 import requests
+import os
 from Bio.Seq import Seq
 from Bio import AlignIO
-#from Bio.Alphabet import *
 
 def generate_fp_sequence(prompt:str):
 
@@ -35,35 +35,25 @@ def generate_fp_sequence(prompt:str):
                 except IndexError:
                     print("Warning: Unexpected data format. Skipping.")
                     
-
-    url = "https://www.ebi.ac.uk/interpro/api/entry/pfam/"
-
     # Create a set of unique pfam_values to prevent duplicate requests
     pfam_values = list(set(pfam_values))
-    data_list = []
-    sequences_list = []
-    protein_seed_sequences = []
-    protein_sequences = []
-    for pfam_value in pfam_values:
-        response = requests.get(url + pfam_value + "?annotation=alignment:seed")
-        if response.status_code == 200:
-            with open('tmp.txt', 'w') as f:
-                f.write(response.text)
-            align = AlignIO.read('tmp.txt', "stockholm")
-            for record in align:
-                protein_seed_sequences.append(record.seq)
-                #print(record.seq)
-            #data_list.append(sequence_response["probs_arr"])
-            #print(align)
-            
-            #TODO: input actual selection alg for mapped macro-seed
-            protein_sequences.append(protein_seed_sequences[0])
-        else:
-            print(f"Warning: Failed to retrieve data for pfam_value {pfam_value}.")
 
-    #print()
+    protein_sequences_str = seq_seed_gen(pfam_values=pfam_values)
+    
 
     fusion_prot = ""
+    protein_sequences = []
+    
+    for i in range(len(protein_sequences_str)):
+        protein_sequences_str[i] = list(str(protein_sequences_str[i]))
+
+        for j in range(len(protein_sequences_str[i])):
+            for element in protein_sequences_str[i]:
+                if element == "-" or element == ".":
+                    protein_sequences_str[i].remove(element)
+
+
+        protein_sequences.append(Seq("".join(protein_sequences_str[i])))
 
     for protein_sequence in protein_sequences:
         fusion_prot+=protein_sequence + "GSGSGS"
@@ -75,6 +65,96 @@ def generate_fp_sequence(prompt:str):
     
     fusion_prot_seq = Seq(fusion_prot)
     return(fusion_prot_seq)
+
+def seq_seed_gen(pfam_values: list):
+    protein_sequences = []
+    protein_seed_sequences = []
+    url = "https://www.ebi.ac.uk/interpro/api/entry/pfam/"
+    for pfam_value in pfam_values:
+        response = requests.get(url + pfam_value + "?annotation=alignment:seed")
+        if response.status_code == 200:
+            with open('tmp.txt', 'w') as f:
+                f.write(response.text)
+            align = AlignIO.read('tmp.txt', "stockholm")
+            os.remove('tmp.txt')
+            for record in align:
+                protein_seed_sequences.append(record.seq)
+            
+            protein_sequence = rank_sequences_based_on_common(protein_seed_sequences)[0][1]
+            protein_sequences.append(protein_sequence)
+            protein_seed_sequences = []
+        else:
+            print(f"Warning: Failed to retrieve data for pfam_value {pfam_value}.")
+    
+    return protein_sequences
+
+def seq_logo_gen(pfam_values: list):
+    protein_sequences  = []
+    url = "https://www.ebi.ac.uk/interpro/api/entry/pfam/"
+    data_list = []
+    for pfam_value in pfam_values:
+        response = requests.get(url + pfam_value + "?annotation=logo")
+        if response.status_code == 200:
+            sequence_response = response.json()
+            data_list.append(sequence_response["probs_arr"])
+        else:
+            print(f"Warning: Failed to retrieve data for pfam_value {pfam_value}.")
+
+    alphabets_list = []
+    for data in data_list:
+        last_strings = [lst[-1] for lst in data]
+        alphabets_list.append(s.split(':')[0] for s in last_strings)
+
+    protein_sequences = []
+    for sequence_arr in alphabets_list:
+        protein_sequences.append(Seq("".join(sequence_arr)))
+    
+    return protein_sequences
+
+def create_sequence_based_on_common(sequences):
+    # Assumption! All sequences are the same length
+    length = len(sequences[0])
+
+    # Find the most common letter at each position
+    # If there is a tie, choose the first one    
+    consensus = ""
+    for i in range(length):
+        # Get the ith letter from each sequence
+        letters = [seq[i] for seq in sequences]
+        # Find the most common letter
+        most_common = max(set(letters), key=letters.count)
+        consensus += most_common
+
+    return consensus
+
+def rank_sequences_based_on_common(sequences):
+    # Assumption! All sequences are the same length
+    length = len(sequences[0])
+
+    # Find the most common letter at each position
+    # If there is a tie, choose the first one    
+    consensus = ""
+    for i in range(length):
+        # Get the ith letter from each sequence
+        letters = [seq[i] for seq in sequences]
+        # Find the most common letter
+        most_common = max(set(letters), key=letters.count)
+        consensus += most_common
+
+    # Rank the sequences based on how many letters they have in common with the consensus
+    ranked_sequences = []
+    for seq in sequences:
+        score = 0
+        for i in range(length):
+            if seq[i] == consensus[i]:
+                score += 1
+        ranked_sequences.append((score, seq))
+
+    # Sort the sequences by their score
+    ranked_sequences.sort(reverse=True)
+
+    return ranked_sequences
+
 
 def run():
     prompt = input('Provide comma-seprated list of keywords\n')
