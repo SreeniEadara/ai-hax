@@ -36,6 +36,7 @@ url = "https://www.ebi.ac.uk/interpro/api/entry/pfam/"
 # Create a set of unique pfam_values to prevent duplicate requests
 pfam_values = list(set(pfam_values))
 data_list = []
+sequences_list = []
 for pfam_value in pfam_values:
     response = requests.get(url + pfam_value + "?annotation=logo")
     if response.status_code == 200:
@@ -44,7 +45,14 @@ for pfam_value in pfam_values:
     else:
         print(f"Warning: Failed to retrieve data for pfam_value {pfam_value}.")
 
+alphabets_list = []
 for data in data_list:
     last_strings = [lst[-1] for lst in data]
-    alphabets_list = [s.split(':')[0] for s in last_strings]
+    alphabets_list.append(s.split(':')[0] for s in last_strings)
     print(alphabets_list)
+
+protein_sequences = []
+for sequence_arr in alphabets_list:
+    protein_sequences.append("".join(sequence_arr))
+
+print(protein_sequences)
