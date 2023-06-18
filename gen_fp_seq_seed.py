@@ -3,7 +3,6 @@ import requests
 import os
 from Bio.Seq import Seq
 from Bio import AlignIO
-#from Bio.Alphabet import *
 
 def generate_fp_sequence(prompt:str):
 
@@ -36,44 +35,25 @@ def generate_fp_sequence(prompt:str):
                 except IndexError:
                     print("Warning: Unexpected data format. Skipping.")
                     
-
-    
-
     # Create a set of unique pfam_values to prevent duplicate requests
     pfam_values = list(set(pfam_values))
-    #data_list = []
-    #sequences_list = []
-    
-    #protein_sequences1 = []
-    #protein_sequences2 = []
+
     protein_sequences_str = seq_seed_gen(pfam_values=pfam_values)
-    #protein_sequences2 = seq_logo_gen(pfam_values=pfam_values)
     
-    #print()
 
     fusion_prot = ""
-    #protein_sequences = protein_sequences1
     protein_sequences = []
     
     for i in range(len(protein_sequences_str)):
         protein_sequences_str[i] = list(str(protein_sequences_str[i]))
-        #protein_sequences2[i] = list(str(protein_sequences2[i]))
 
-        #protein_sequences1_tmp = protein_sequences1
         for j in range(len(protein_sequences_str[i])):
             for element in protein_sequences_str[i]:
                 if element == "-" or element == ".":
                     protein_sequences_str[i].remove(element)
 
-        #protein_sequences1 = protein
-        #if len(protein_sequences1[i]) != len(protein_sequences2[i]):
-        #    print('Warning: sequence logo and seed length do not match')
-        #    protein_sequences.append(Seq("".join(protein_sequences1[i])))
-        #    continue
 
         protein_sequences.append(Seq("".join(protein_sequences_str[i])))
-
-    #protein_sequences = 
 
     for protein_sequence in protein_sequences:
         fusion_prot+=protein_sequence + "GSGSGS"
@@ -99,10 +79,6 @@ def seq_seed_gen(pfam_values: list):
             os.remove('tmp.txt')
             for record in align:
                 protein_seed_sequences.append(record.seq)
-                #print(record.seq)
-            #data_list.append(sequence_response["probs_arr"])
-            #print(align)
-            
             
             protein_sequence = rank_sequences_based_on_common(protein_seed_sequences)[0][1]
             protein_sequences.append(protein_sequence)
