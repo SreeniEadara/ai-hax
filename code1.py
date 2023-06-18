@@ -1,7 +1,10 @@
 import openai
-OPENAI_API_KEY = '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'
-openai.api_key = OPENAI_API_KEY
 import json
+import requests
+
+OPENAI_API_KEY = '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'
+openai.api_key = OPENAI_API_KEY
+
 messages = [
     {"role": "system", "content": "produce a .yml file containing protein domains for the following protein with the following format:- domain: type: name: pfam:"},
     {"role": "user", "content": "Ribosome"}
@@ -27,10 +30,13 @@ for choice in choices:
     yaml_data = content.split("\n")[3:]  # Remove the first three lines ("protein: Ribosome", "domains:", and the empty line)
     for line in yaml_data:
         if "pfam" in line:
-            pfam_value = line.split(": ")[1]
+            try:
+                pfam_value = line.split(": ")[1]
+            except:
+                pass
             pfam_list.append(pfam_value)
             
-print(pfam_list)
+#print(pfam_list)
 
 
 # Define the API endpoint
@@ -47,8 +53,13 @@ response = requests.get(urlfinal)
 # Check the response status code
 if response.status_code == 200:
     # Print the response content
-    print(response.json())
+    #print(response.json())
+    sequence_response = response.json()
+    data = sequence_response["probs_arr"]
+    last_strings = [lst[-1] for lst in data]
+    alphabets_list = [s.split(':')[0] for s in last_strings]
+    print(alphabets_list)
 else:
     print("Error: Failed to retrieve data from the API.")
 
-print(url + endpoint + pfam_value + entry_id)
+#print(url + endpoint + pfam_value + entry_id)
