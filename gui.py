@@ -47,7 +47,7 @@ class App(Frame):
 
 def run_gui():
     root = Tk()
-    app = App(root)
+    App(root)
     root.mainloop()
 
 run_gui()
