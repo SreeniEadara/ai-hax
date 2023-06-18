@@ -1,7 +1,7 @@
 import openai
 import requests
 
-def generate_structure(prompt:str):
+def generate_fp_sequence(prompt:str):
 
     OPENAI_API_KEY = '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'  # Replace with your OpenAI key
     openai.api_key = OPENAI_API_KEY
@@ -72,7 +72,7 @@ def generate_structure(prompt:str):
 
 def run():
     prompt = input('Provide comma-seprated list of keywords\n')
-    result = generate_structure(prompt)
+    result = generate_fp_sequence(prompt)
     print(result)
 
 run()
