@@ -2,7 +2,7 @@ import openai
 import json
 import requests
 
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = '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'
 openai.api_key = OPENAI_API_KEY
 
 messages = [
