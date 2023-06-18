@@ -2,7 +2,7 @@
 
 ## Elements of AI in Biotech
 
-Out plan focuses on synthesizing protein sequences based on user defined conditions using the GPT-4 large language model.
+Our plan focuses on synthesizing protein sequences based on user defined conditions using the GPT-4 large language model.
 
 Benefits:
 - Fast, easy method to generate fusion proteins with several functions. Does not require extensive literature search.
