@@ -19,9 +19,9 @@ List of domains not well understood by reccomendation model:
 ```
 pH levels, water solubility, hydrophilicity 
 ```
-```
-cli.py:
-```
+
+## cli.py:
+
 This module is the entry point of the Command Line Interface (CLI) for the application. It prompts the user to input a comma-separated list of keywords, generates a protein sequence based on these keywords, and then saves the result as a FASTA file.
 
 
@@ -48,9 +48,9 @@ rank_sequences_based_on_common(sequences): Ranks the sequences based on their si
 
 
 
-```
-gui.py:
-```
+
+## gui.py:
+
 This module provides a Graphical User Interface (GUI) for the application using the Tkinter library. Users can input a comma-separated list of keywords, and the application will generate a protein sequence based on these keywords and display it in the GUI. Users can also save the output to a file or fold the protein sequence by sending it to an external API.
 
 
