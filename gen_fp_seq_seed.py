@@ -109,8 +109,9 @@ def seq_seed_gen(pfam_values: list):
             #data_list.append(sequence_response["probs_arr"])
             #print(align)
             
-            #TODO: input actual selection alg for mapped macro-seed
-            protein_sequences.append(protein_seed_sequences[0])
+            
+            protein_sequence = create_sequence_based_on_common(protein_seed_sequences)
+            protein_sequences.append(protein_sequence)
             protein_seed_sequences = []
         else:
             print(f"Warning: Failed to retrieve data for pfam_value {pfam_value}.")
@@ -139,6 +140,51 @@ def seq_logo_gen(pfam_values: list):
         protein_sequences.append(Seq("".join(sequence_arr)))
     
     return protein_sequences
+
+def create_sequence_based_on_common(sequences):
+    # Assumption! All sequences are the same length
+    length = len(sequences[0])
+
+    # Find the most common letter at each position
+    # If there is a tie, choose the first one    
+    consensus = ""
+    for i in range(length):
+        # Get the ith letter from each sequence
+        letters = [seq[i] for seq in sequences]
+        # Find the most common letter
+        most_common = max(set(letters), key=letters.count)
+        consensus += most_common
+
+    return consensus
+
+def rank_sequences_based_on_common(sequences):
+    # Assumption! All sequences are the same length
+    length = len(sequences[0])
+
+    # Find the most common letter at each position
+    # If there is a tie, choose the first one    
+    consensus = ""
+    for i in range(length):
+        # Get the ith letter from each sequence
+        letters = [seq[i] for seq in sequences]
+        # Find the most common letter
+        most_common = max(set(letters), key=letters.count)
+        consensus += most_common
+
+    # Rank the sequences based on how many letters they have in common with the consensus
+    ranked_sequences = []
+    for seq in sequences:
+        score = 0
+        for i in range(length):
+            if seq[i] == consensus[i]:
+                score += 1
+        ranked_sequences.append((score, seq))
+
+    # Sort the sequences by their score
+    ranked_sequences.sort(reverse=True)
+
+    return ranked_sequences
+
 
 def run():
     prompt = input('Provide comma-seprated list of keywords\n')
