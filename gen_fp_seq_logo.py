@@ -4,7 +4,9 @@ from Bio.Seq import Seq
 
 def generate_fp_sequence(prompt:str):
 
-    OPENAI_API_KEY = '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'  # Replace with your OpenAI key
+    with open("openai-key.txt", 'r') as file:
+        OPENAI_API_KEY = file.read().replace("\n", '')
+
     openai.api_key = OPENAI_API_KEY
 
     messages = [
