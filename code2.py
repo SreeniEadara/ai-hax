@@ -5,8 +5,8 @@ OPENAI_API_KEY = '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'  # Replac
 openai.api_key = OPENAI_API_KEY
 
 messages = [
-    {"role": "system", "content": "produce a .yml file containing protein domains for the following protein with the following format:- domain: type: name: pfam:"},
-    {"role": "user", "content": "Ribosome"}
+    {"role": "system", "content": "For the following protein, create a .yml file containing a single protein per protein domain with the following format. - domain: type: name: pfam:"},
+    {"role": "user", "content": "ribosome, antibody"}
 ]
 
 response = openai.ChatCompletion.create(
@@ -49,7 +49,6 @@ alphabets_list = []
 for data in data_list:
     last_strings = [lst[-1] for lst in data]
     alphabets_list.append(s.split(':')[0] for s in last_strings)
-    print(alphabets_list)
 
 protein_sequences = []
 for sequence_arr in alphabets_list:
