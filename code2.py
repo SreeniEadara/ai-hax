@@ -4,9 +4,11 @@ import requests
 OPENAI_API_KEY = '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'  # Replace with your OpenAI key
 openai.api_key = OPENAI_API_KEY
 
+prompt = input('Provide comma-seprated list of keywords\n')
+
 messages = [
     {"role": "system", "content": "For the following protein, create a .yml file containing a single protein per protein domain with the following format. - domain: type: name: pfam:"},
-    {"role": "user", "content": "ribosome, antibody"}
+    {"role": "user", "content": prompt}
 ]
 
 response = openai.ChatCompletion.create(
@@ -54,4 +56,12 @@ protein_sequences = []
 for sequence_arr in alphabets_list:
     protein_sequences.append("".join(sequence_arr))
 
-print(protein_sequences)
+#print(protein_sequences)
+
+fusion_prot = ""
+
+for protein_sequence in protein_sequences:
+    fusion_prot+=protein_sequence + "GSGSGS"
+
+fusion_prot = fusion_prot[0:fusion_prot.rfind("GSGSGS")]
+print(fusion_prot)
