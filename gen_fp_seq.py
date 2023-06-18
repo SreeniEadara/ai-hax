@@ -57,8 +57,6 @@ def generate_fp_sequence(prompt:str):
     for sequence_arr in alphabets_list:
         protein_sequences.append("".join(sequence_arr))
 
-    #print(protein_sequences)
-
     fusion_prot = ""
 
     for protein_sequence in protein_sequences:
